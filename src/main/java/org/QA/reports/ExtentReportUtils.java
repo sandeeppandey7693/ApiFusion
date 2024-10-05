@@ -8,7 +8,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import java.lang.reflect.Method;
-
+import org.QA.
 
 public class ExtentReportUtils {
     static ExtentTest testCase;
@@ -18,7 +18,12 @@ public class ExtentReportUtils {
     @BeforeSuite
     public static void initializeExtentReport(){
         String reportRunDate = java.time.LocalDate.now().toString();
-        String reportPath = System.getProperty("user.dir")+ "\\"+ ReportPath + "\\" + reportRunDate + "\\ExtentReport.html";
+        String reportPath = System.getProperty("user.dir")+ "\\"+ FrameworkGlobalVar.ReportPath + "\\" + reportRunDate;
+
+        if (FrameworkGlobalVar.reportName == null)
+            reportPath +=  "\\ExtentReport.html";
+        else
+            reportPath += "\\" + FrameworkGlobalVar.reportName +".html";
 
         sparkReporter = new ExtentSparkReporter(reportPath);
 
