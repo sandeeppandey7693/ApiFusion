@@ -1,9 +1,9 @@
-package org.QA.APITest;
+package org.QA.APIConnection;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class OauthTokenUpdate {
+public class OauthTokenFormat {
 
     private static boolean voidToken = false;
     private static boolean argToken = false;
