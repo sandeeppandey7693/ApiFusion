@@ -1,0 +1,7 @@
+mailTo: ''
+reportName: 'API Test Suite report'
+ReportPath: .\Report
+tags: ''
+environment: beta
+baseEndpoint: 'httpL//google.com/'
+projectName: 'API fusion'

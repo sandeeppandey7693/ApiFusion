@@ -18,17 +18,12 @@ public class FrameworkGenericUtils {
             Yaml yaml = new Yaml();
 
             FrameworkGlobalVar.projectData = yaml.load(readProjectFile);
+            System.out.println((String) yaml.load(readProjectFile));
             FrameworkGlobalVar.environment = getProjectEnvironment();
-            FrameworkGlobalVar.envData = (Map<String, Object>) getIgnoreCase(FrameworkGlobalVar.projectData,FrameworkGlobalVar.environment);
             FrameworkGlobalVar.dotEnvProperties = getDotEnvProperties();
-            FrameworkGlobalVar.projectName=getProjectName();
-            if (FrameworkGlobalVar.envData==null)
-                throw new RuntimeException("No rnv value exist in project config file");
-            else {
-                FrameworkGlobalVar.mailTo = getCurrentProperty("mailto",FrameworkGlobalVar.mailTo);
-              //  FrameworkGlobalVar.re = getCurrentProperty("mailto",FrameworkGlobalVar.mailTo);
+            FrameworkGlobalVar.projectName = getProjectName();
+//            FrameworkGlobalVar.mailTo =
 
-            }
         }
     }
 
@@ -44,9 +39,6 @@ public class FrameworkGenericUtils {
         }
         else if(getEnvVariableIgnoreCase(propertyName)!=null){
             propertyName = getEnvVariableIgnoreCase(propertyName);
-        }
-        else if(containsKeyIgnoreCase(FrameworkGlobalVar.envData,propertyName)){
-            PropertyValue = getIgnoreCase(FrameworkGlobalVar.envData,propertyName).toString();
         }
         else if(containsKeyIgnoreCase(FrameworkGlobalVar.projectData,propertyName)){
             PropertyValue = getIgnoreCase(FrameworkGlobalVar.projectData,propertyName).toString();
@@ -69,9 +61,6 @@ public class FrameworkGenericUtils {
         }
         else if(getEnvVariableIgnoreCase(propertyName)!=null){
             propertyName = getEnvVariableIgnoreCase(propertyName);
-        }
-        else if(containsKeyIgnoreCase(FrameworkGlobalVar.envData,propertyName)){
-            PropertyValue = getIgnoreCase(FrameworkGlobalVar.envData,propertyName).toString();
         }
         else if(containsKeyIgnoreCase(FrameworkGlobalVar.projectData,propertyName)){
             PropertyValue = getIgnoreCase(FrameworkGlobalVar.projectData,propertyName).toString();
@@ -139,9 +128,6 @@ public class FrameworkGenericUtils {
         }
         else if(getEnvVariableIgnoreCase(propertyName)!=null){
             propertyName = getEnvVariableIgnoreCase(propertyName);
-        }
-        else if(containsKeyIgnoreCase(FrameworkGlobalVar.envData,propertyName)){
-            PropertyValue = getIgnoreCase(FrameworkGlobalVar.envData,propertyName).toString();
         }
         else if(containsKeyIgnoreCase(FrameworkGlobalVar.projectData,propertyName)){
             PropertyValue = getIgnoreCase(FrameworkGlobalVar.projectData,propertyName).toString();
