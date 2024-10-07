@@ -5,21 +5,24 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.QA.generic.FrameworkGlobalVar;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import java.lang.reflect.Method;
+
+import java.util.logging.Logger;
 
 public class ExtentReportUtils {
     static ExtentTest testCase;
     static ExtentSparkReporter sparkReporter;
     static ExtentReports extentReports;
 
+    static final Logger logger = Logger.getLogger(ExtentReportUtils.class.getName());
     @BeforeSuite
     public static void initializeExtentReport(){
+
         String reportRunDate = java.time.LocalDate.now().toString();
         String reportPath = System.getProperty("user.dir")+ "\\"+ FrameworkGlobalVar.ReportPath + "\\" + reportRunDate;
 
+        //String reportPath = "test-output/ExtentReport.html" ;
         if (FrameworkGlobalVar.reportName == null)
             reportPath +=  "\\ExtentReport.html";
         else
@@ -29,11 +32,13 @@ public class ExtentReportUtils {
 
         extentReports = new ExtentReports();
         extentReports.attachReporter(sparkReporter);
+        logger.info("Extent Reports initialized at: " + reportPath);
     }
 
     @BeforeMethod
-    public static void addTestCase(Method method){
-        testCase = extentReports.createTest(method.getName());
+    public static void startTestcase(String method){
+        testCase = extentReports.createTest(method);
+        logger.info("Test case started: " + method);
     }
 
     public static void addTestStep(String stepName, String stepStatus , String stepDescription){
@@ -51,7 +56,9 @@ public class ExtentReportUtils {
                 testCase.createNode(stepName).generateLog(Status.INFO,stepDescription);
         }
     }
-
+    public static void logInfo(String message) {
+        testCase.info(message);
+    }
     public static void setPassTestStep(String stepName,String stepDescription){
         addTestStep(stepName,"PASS",stepDescription);
     }
