@@ -2,6 +2,7 @@ package org.QA.generic;
 
 import io.restassured.RestAssured;
 import org.QA.reports.ExtentReportUtils;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -20,6 +21,10 @@ public class Hooks {
         logger.info("Base URI set to: " + RestAssured.baseURI);
 
         ExtentReportUtils.initializeExtentReport();
+    }
+    @AfterClass
+    public void tearDown() {
+        ExtentReportUtils.flush();  // Flush the reports here
     }
     @BeforeMethod
     public void beforeSuite() {
