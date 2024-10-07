@@ -146,6 +146,9 @@ public class RequestConnect {
     public static Response getRequest(final String url){
         return makeRequest("GET",url,null,null,null);
     }
+    public static Response getRequest(final String url, int userId ){
+        return makeRequest("GET",url+"/"+userId,null,null,null);
+    }
     public static Response getOauthRequest(final String url){
         return makeRequest("GET",url,null,getAuthMap(),null);
     }

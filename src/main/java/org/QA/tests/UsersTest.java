@@ -9,10 +9,19 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
-public class ApiTest extends Hooks {
+public class UsersTest extends Hooks {
 
+
+    /*
+    * GET /users: List all users.
+     ○ GET /users/{id}: Retrieve a specific user.
+     ○ POST /users: Create a new user.
+     ○ PUT /users/{id}: Update an existing user.
+     ○ DELETE /users/{id}: Delete a user.
+
+    * */
     @Test
-    public void testGetRequest(Method method) {
+    public void getListOfAllUsers(Method method) {
         ExtentReportUtils.startTestcase(method.getName());
 
         ExtentReportUtils.startNode("Send GET Request with "+"<a href='"+"URL :"+ RestAssured.baseURI+"/users"+"' style='color:blue;'>");
