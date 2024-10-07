@@ -35,6 +35,15 @@ public class ExtentReportUtils {
         logger.info("Extent Reports initialized at: " + reportPath);
     }
 
+    public static void flush() {
+        if (extentReports != null) {
+            extentReports.flush(); // Ensure that flush is called to generate the report
+            logger.info("Extent Reports flushed successfully.");  // Log when flushing the report
+        } else {
+            logger.warning("Extent Reports not initialized; cannot flush.");  // Log warning if not initialized
+        }
+    }
+
     @BeforeMethod
     public static void startTestcase(String method){
         testCase = extentReports.createTest(method);
