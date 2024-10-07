@@ -2,29 +2,18 @@ package org.QA.APIConnection;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.QA.generic.FrameworkGenericUtils;
 import org.QA.generic.FrameworkGlobalVar;
 import org.json.simple.JSONObject;
+import org.testng.Assert;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
 
@@ -35,7 +24,7 @@ public class RequestConnect {
         try (OutputStream stream = outputStream) {
             stream.write(jsonStringPayload.getBytes());
             stream.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -85,61 +74,79 @@ public class RequestConnect {
         return bearerToken;
     }
 
-    private static Map<String,String> getAuthMap(){
-        Map<String,String> authHeader = new HashMap<>();
-        authHeader.put("Authorization",FrameworkGlobalVar.bearerToken);
+    private static Map<String, String> getAuthMap() {
+        Map<String, String> authHeader = new HashMap<>();
+        authHeader.put("Authorization", FrameworkGlobalVar.bearerToken);
         return authHeader;
     }
-    public static HttpURLConnection createSSLDisabledHttpsUrlConnection(final URL requestUrl){
-        HttpURLConnection httpURLConnection;
-        try{
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null,getTrustManager(), new SecureRandom());
-           httpURLConnection = (HttpURLConnection) requestUrl.openConnection();
-          // httpURLConnection.
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+    public static Response makeRequest(String method, String endpoint, String body, Map<String, String> headers, Map<String, String> queryParams) {
+       final Logger logger = Logger.getLogger(RequestConnect.class.getName());
+        RequestSpecification request = given();
+        logger.info("Making " + method + " request to: " + endpoint);
+
+        // Log headers if available
+        if (headers != null && !headers.isEmpty()) {
+            request.headers(headers);
+            logger.info("Request Headers: " + headers);
         }
-        return null;
-    }
-    private static TrustManager[] getTrustManager(){
-        TrustManager[] trustManagers = new TrustManager[]{new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-
-            }
-
-            @Override
-            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-
-            }
-
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[0];
-            }
-        }};
-        return null;
-    }
-    public static JsonObject makeRequest(String step, String url, String requestType,
-                                         String requestPayload,Map<String,String> headers,int expectedStatusCode){
-        String projectName = FrameworkGlobalVar.projectName;
-        HttpURLConnection httpURLConnection;
-        String requestStepDescription = "";
-        String requestHeaders = "";
-        Map<String ,Object> resultInput = new HashMap<>();
-        try{
-            URL requestUrl = new URL(url);
-            String requestProtocol = requestUrl.getProtocol();
-            long startTime = Instant.now().toEpochMilli();
-           // httpURLConnection = requestProtocol.equals("https") ?
-        }catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+        // Log query parameters if available
+        if (queryParams != null && !queryParams.isEmpty()) {
+            request.queryParams(queryParams);
+            logger.info("Query Params: " + queryParams);
         }
-        return null;
+        // Log body if it's a POST/PUT request
+        if (body != null && (method.equalsIgnoreCase("POST") || method.equalsIgnoreCase("PUT"))) {
+            request.body(body);
+            logger.info("Request Body: " + body);
+        }
+        // Handle different request methods and log the response
+        Response response = null;
+        switch (method.toUpperCase()) {
+            case "GET":
+                response = request.get(endpoint);
+                break;
+            case "POST":
+                response = request.post(endpoint);
+                break;
+            case "PUT":
+                response = request.put(endpoint);
+                break;
+            case "DELETE":
+                response = request.delete(endpoint);
+                break;
+            default:
+                logger.severe("Invalid HTTP method: " + method);
+                throw new IllegalArgumentException("Invalid HTTP method: " + method);
+        }
+
+        // Ensure that the response is not null
+        Assert.assertNotNull(response, "The response is null!");
+
+        // Log response details
+        logger.info("Response Status Code: " + response.getStatusCode());
+        logger.info("Response Body: " + response.getBody().asString());
+
+        // Return the response for further validation
+        return response;
+    }
+
+    //--------------------------POST--------------------------
+    public static Response postRequest(String url, String requestPayload){
+        return postRequest(url,requestPayload,(Map<String,String>)null);
+    }
+    public static Response postRequest(String url, String requestPayload, Map<String,String> headers){
+        return makeRequest("post",url,requestPayload,headers,(Map<String,String>)null);
+    }
+    public static Response postOauthRequest(String url, String requestPayload){
+        return postRequest(url,requestPayload,getAuthMap());
+    }
+
+   // ----------------------------Get------------------------
+    public static Response getRequest(final String url){
+        return makeRequest("GET",url,null,null,null);
+    }
+    public static Response getOauthRequest(final String url){
+        return makeRequest("GET",url,null,getAuthMap(),null);
     }
 }
