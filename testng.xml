@@ -1,10 +1,13 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
-<suite name="Suite">
-    <test name="Test">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="MySuite">
+    <test name="RunSelectedTest">
         <classes>
-            <class name="TestClassAPI" >
+            <class name="org.QA.tests.UsersTest">
                 <methods>
-                    <include name="sampleTestApi"/>
+                    <include name="getListOfAllUsers" />
+                    <include name="getUserDetailsById" />
+                    <include name="createUser" />
                 </methods>
             </class>
         </classes>
