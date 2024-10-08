@@ -6,27 +6,32 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.QA.generic.FrameworkGenericUtils;
 import org.QA.generic.FrameworkGlobalVar;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 public class ExtentReportUtils {
     static ExtentTest testCase;
     static ExtentSparkReporter sparkReporter;
     static ExtentReports extentReports;
-    private static ExtentTest currentNode;
+    public static ExtentTest currentNode;
+    public static ExtentTest currentTest;
 
     static final Logger logger = Logger.getLogger(ExtentReportUtils.class.getName());
-    @BeforeSuite
-    public static void initializeExtentReport(){
+    @BeforeMethod
+    public static void initializeExtentReport(String testName){
 
         String reportRunDate = java.time.LocalDate.now().toString();
-        String reportPath = System.getProperty("user.dir")+ "\\"+ FrameworkGlobalVar.ReportPath + "\\" + reportRunDate;
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+       // FrameworkGenericUtils.getCurrentProperty("ReportPath","./Report");
+        String reportPath = System.getProperty("user.dir")+ "\\"+ "Reports/ExtentReport_"  +testName + "_" + reportRunDate ;
 
-        //String reportPath = "test-output/ExtentReport.html" ;
         if (FrameworkGlobalVar.reportName == null)
             reportPath +=  "\\ExtentReport.html";
         else
@@ -47,7 +52,7 @@ public class ExtentReportUtils {
             logger.warning("Extent Reports not initialized; cannot flush.");  // Log warning if not initialized
         }
     }
-    @BeforeMethod
+   // @BeforeMethod : Added in Setup method of hooks class
     public static void startTestcase(String methodName) {
         testCase = extentReports.createTest(methodName);  // Set test case as method name
         logger.info("Test case started: " + methodName);
@@ -90,6 +95,17 @@ public class ExtentReportUtils {
             logger.info("JSON Response logged in formatted form.");
         } else {
             logger.warning("Cannot log JSON response because currentNode is null.");
+        }
+    }
+    public static void logJsonRequest(String requestBody) {
+        if (currentNode != null) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();  // Use Gson for pretty-printing JSON
+            String prettyJson = gson.toJson(new Gson().fromJson(requestBody, Object.class));
+            currentNode.info("<details><summary><b>Request Body</b></summary><pre>" + prettyJson + "</pre></details>");
+        } else if (currentTest != null) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String prettyJson = gson.toJson(new Gson().fromJson(requestBody, Object.class));
+            currentTest.info("<details><summary><b>Request Body</b></summary><pre>" + prettyJson + "</pre></details>");
         }
     }
     // Log status for a node
