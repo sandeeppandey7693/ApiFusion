@@ -1,4 +1,4 @@
-package org.QA.tests;
+package tests;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
