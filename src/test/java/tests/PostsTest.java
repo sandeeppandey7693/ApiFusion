@@ -1,4 +1,4 @@
-package org.QA.tests;
+package tests;
 
 public class PostsTest {
 }
